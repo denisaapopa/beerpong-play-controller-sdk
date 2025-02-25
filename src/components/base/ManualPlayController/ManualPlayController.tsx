@@ -1,10 +1,12 @@
 import { Currency } from "@enigma-lake/zoot-platform-sdk";
+import cx from "classnames";
 
-import PlayAmountControl from "../PlayController/PlayController";
 import { usePlayController } from "../../hooks/usePlayController";
+import MiniPlayAmountControl from "../PlayController/MiniPlayAmountControl";
 import Button from "../Button";
 
 import styles_button from "../Button/Button.module.scss";
+import styles_group from "./ManualPlayController.module.scss";
 
 const ManualPlayController = () => {
   const {
@@ -21,8 +23,8 @@ const ManualPlayController = () => {
   } = usePlayController();
 
   return (
-    <>
-      <PlayAmountControl
+    <div className={cx(styles_group.base)}>
+      <MiniPlayAmountControl
         playAmount={playAmount}
         minPlayAmount={minPlayAmount}
         maxPlayAmount={maxPlayAmount}
@@ -36,16 +38,16 @@ const ManualPlayController = () => {
 
       <Button
         disabled={isDisabled() || !isValidPlayAmount}
-        className={
-          currentCurrency === Currency.GOLD
-            ? styles_button.buttonGold
-            : styles_button.buttonSweeps
-        }
+        className={cx({
+          [styles_button.buttonGold]: currentCurrency === Currency.GOLD,
+          [styles_button.buttonSweeps]: currentCurrency !== Currency.GOLD,
+          [styles_button.overlap]: true,
+        })}
         onClick={onPlay}
       >
-        Play now
+        Play
       </Button>
-    </>
+    </div>
   );
 };
 

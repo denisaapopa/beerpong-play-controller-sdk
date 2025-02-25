@@ -32,7 +32,9 @@ const Input = ({ onChange, disabled, className, max, ...restProps }: Props) => {
       {...restProps}
       disabled={disabled}
       onChange={handleChange}
-      className={cx(styles.base, className, { [styles.disabled]: disabled })}
+      className={cx(styles.base, className, {
+        [styles.disabled]: disabled,
+      })}
     />
   );
 };

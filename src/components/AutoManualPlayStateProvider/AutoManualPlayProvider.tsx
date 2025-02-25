@@ -5,7 +5,7 @@ import { AUTO_PLAY_STATE, GAME_MODE } from "../../types/gameMode";
 import { PlayControllerProps } from "../../types/playController";
 
 import AutoPlayController from "../base/AutoPlayController";
-import ManualPlayController from "../base/ManualPlayController";
+import ManualMultiPlayController from "../base/ManualMultiPlayController";
 
 import styles_ui from "./UI.module.scss";
 import {
@@ -122,7 +122,9 @@ const AutoManualPlayProvider: React.FC<AutoManualPlayStateProviderProps> = ({
 
       {config.playOptions.displayController && (
         <div
-          className={cx(styles_ui.base, styles_ui.betForm)}
+          className={cx(styles_ui.base, styles_ui.betForm, {
+            [styles_ui.multiPlayController]: mode === GAME_MODE.MANUAL,
+          })}
           style={
             {
               "--play-top": config.panel.top,
@@ -172,7 +174,7 @@ const AutoManualPlayProvider: React.FC<AutoManualPlayStateProviderProps> = ({
           </div>
 
           {mode === GAME_MODE.MANUAL ? (
-            <ManualPlayController />
+            <ManualMultiPlayController />
           ) : (
             <AutoPlayController />
           )}

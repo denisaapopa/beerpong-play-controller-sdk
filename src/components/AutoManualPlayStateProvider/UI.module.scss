@@ -12,17 +12,20 @@
 .betForm {
   position: absolute;
   left: 50%;
-  transform: translateX(-50%);
   top: var(--play-top);
+  transform: translate(-50%, -50%);
   background-color: rgba(var(--play-panel-bg), 0.5);
 
   width: 294px;
-  min-height: 148px;
-  height: auto;
-  max-height: 182px;
+  height: 148px;
   padding: 12px;
   display: flex;
   flex-direction: column;
+}
+
+.multiPlayController {
+  height: 182px;
+  gap: 7px;
 }
 
 .disabled {

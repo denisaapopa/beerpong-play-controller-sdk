@@ -1,8 +1,8 @@
 import cx from "classnames";
 import { ComponentProps, PropsWithChildren } from "react";
 import { Currency } from "@enigma-lake/zoot-platform-sdk";
-
 import Input from "../Input";
+
 import { Switch } from "../Switch/Switch";
 
 import styles from "./InputWithSwitch.module.scss";

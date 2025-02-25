@@ -12,7 +12,9 @@
     &-ghost {
       border-radius: 10px;
       backdrop-filter: blur(10px);
-      height: 35px;
+      height: 100%;
+      width: 100%;
+
       display: flex;
       align-items: center;
       color: rgba(var(--text-color-hex), 1);
@@ -58,4 +60,10 @@
 
 .buttonGold {
   background: linear-gradient(357deg, #bf9e21 22.01%, #f0c72c 97.97%);
+}
+
+.overlap {
+  margin-top: 0;
+  transform: translateY(-15px);
+  padding: 18.5px;
 }
