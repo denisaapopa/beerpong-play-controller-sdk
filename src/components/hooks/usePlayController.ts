@@ -1,8 +1,9 @@
+/* eslint-disable @typescript-eslint/no-shadow */
 import { AUTO_PLAY_STATE } from "../../types";
 import { useAutoManualPlayState } from "../AutoManualPlayStateProvider/AutoManualPlayStateContext";
 import { ChangeEvent, FocusEvent, useRef } from "react";
 
-export const usePlayController = () => {
+export const usePlayController = (left: boolean) => {
   const {
     config,
     mode,
@@ -25,11 +26,20 @@ export const usePlayController = () => {
     playHook,
   } = config.playOptions;
 
-  const { playAmount, playLimits, setPlayAmount } = playHook?.() ?? {};
+  const {
+    leftPlayAmount,
+    rightPlayAmount,
+    setLeftBetAmount,
+    setRightBetAmount,
+    playLimits,
+  } = playHook?.() ?? {};
   const minPlayAmount = playLimits?.[currentCurrency]?.limits.min ?? 0;
   const maxPlayAmount = playLimits?.[currentCurrency]?.limits.max ?? 0;
   const playIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const isAutoplayActiveRef = useRef(false);
+
+  const playAmount = left ? leftPlayAmount : rightPlayAmount;
+  const setPlayAmount = left ? setLeftBetAmount : setRightBetAmount;
 
   const stopAutoplay = () => {
     isAutoplayActiveRef.current = false;
@@ -43,7 +53,11 @@ export const usePlayController = () => {
     }, autoPlayDelay);
   };
 
-  const loopRounds = (currentPlayedRounds: number, remainingPlays: number) => {
+  const loopRounds = (
+    currentPlayedRounds: number,
+    remainingPlays: number,
+    left: boolean,
+  ) => {
     if (!isAutoplayActiveRef.current) {
       return;
     }
@@ -57,19 +71,23 @@ export const usePlayController = () => {
     setPlayedRounds(currentPlayedRounds + 1);
     setNumberOfPlays((prev) => Math.max(prev - 1, 0));
 
-    config.onAutoPlay(() => {
-      if (!isAutoplayActiveRef.current) {
-        return;
-      }
+    config.onAutoPlay(
+      () => {
+        if (!isAutoplayActiveRef.current) {
+          return;
+        }
 
-      playIntervalRef.current = setTimeout(
-        () => loopRounds(currentPlayedRounds + 1, remainingPlays - 1),
-        autoPlayDelay,
-      );
-    }, stopAutoplay);
+        playIntervalRef.current = setTimeout(
+          () => loopRounds(currentPlayedRounds + 1, remainingPlays - 1, left),
+          autoPlayDelay,
+        );
+      },
+      stopAutoplay,
+      left,
+    );
   };
 
-  const handleAutoPlay = () => {
+  const handleAutoPlay = (left: boolean) => {
     if (disabledController) {
       return;
     }
@@ -77,7 +95,7 @@ export const usePlayController = () => {
     isAutoplayActiveRef.current = true;
     setState(AUTO_PLAY_STATE.PLAYING);
 
-    loopRounds(playedRounds, numberOfPlays);
+    loopRounds(playedRounds, numberOfPlays, left);
   };
 
   const isDisabled = () => disabledController || isPlaying || disabledMenu;
@@ -128,7 +146,7 @@ export const usePlayController = () => {
     mode,
     manualPlay: {
       isDisabled,
-      onPlay: config.onPlay,
+      onPlay: (left: boolean) => config.onPlay(left),
       canCashout,
     },
     autoPlay: {

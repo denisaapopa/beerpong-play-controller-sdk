@@ -8,7 +8,7 @@ const ManualMultiPlayController = () => {
   return (
     <div className={cx(style_multi.base)}>
       <ManualPlayController />
-      <ManualPlayController />
+      <ManualPlayController left={false} />
     </div>
   );
 };

@@ -12,7 +12,7 @@
 .betForm {
   position: absolute;
   left: 50%;
-  top: var(--play-top);
+  bottom: var(--play-bottom);
   transform: translate(-50%, -50%);
   background-color: rgba(var(--play-panel-bg), 0.5);
 

@@ -127,7 +127,7 @@ const AutoManualPlayProvider: React.FC<AutoManualPlayStateProviderProps> = ({
           })}
           style={
             {
-              "--play-top": config.panel.top,
+              "--play-bottom": config.panel.bottom,
               "--play-panel-bg": hexToRgb(config.panel.bgColorHex ?? "#01243A"),
               "--play-dropdown-bg": hexToRgb(
                 config.dropdown.bgColorHex ?? "#01243A",

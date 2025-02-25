@@ -3,7 +3,7 @@ import { RiskTypes } from "../components/base/DifficultySelector/types";
 
 export type StylingProps = {
   panel: {
-    top: string;
+    bottom: string;
     bgColorHex: string;
   };
   dropdown: {
@@ -22,8 +22,8 @@ export type CurrencyProps = {
 };
 
 export type ActionsProps = {
-  onPlay: () => void;
-  onAutoPlay: (next: () => void, stop: () => void) => void;
+  onPlay: (left: boolean) => void;
+  onAutoPlay: (next: () => void, stop: () => void, left: boolean) => void;
 };
 
 export type PlaySettingsProps = {
@@ -37,8 +37,10 @@ export type PlaySettingsProps = {
   displayController: boolean;
   playHook: () => {
     playLimits?: PlayLimits;
-    playAmount: number;
-    setPlayAmount: (value: number) => void;
+    leftPlayAmount: number;
+    rightPlayAmount: number;
+    setLeftBetAmount: (value: number) => void;
+    setRightBetAmount: (value: number) => void;
   };
   autoPlayDelay?: number;
 };

@@ -7,7 +7,7 @@ import Button from "../Button";
 
 import styles_button from "../Button/Button.module.scss";
 
-const AutoPlayController = () => {
+const AutoPlayController = ({ left = true }: { left?: boolean }) => {
   const {
     currentCurrency,
     currencies,
@@ -19,7 +19,7 @@ const AutoPlayController = () => {
     onChangeAmount,
     onBlurAmount,
     autoPlay: { isDisabled, state, onPlay, onStopPlay },
-  } = usePlayController();
+  } = usePlayController(left);
 
   return (
     <>
@@ -47,7 +47,7 @@ const AutoPlayController = () => {
               ? styles_button.buttonGold
               : styles_button.buttonSweeps
           }
-          onClick={onPlay}
+          onClick={() => onPlay(left)}
         >
           Start Autoplay
         </Button>
