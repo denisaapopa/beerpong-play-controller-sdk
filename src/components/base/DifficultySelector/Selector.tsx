@@ -10,7 +10,7 @@ const capitalize = (str: string) =>
 const Selector = <T,>({
   currentValue,
   label,
-  borderColor,
+  riskColor,
   values,
   onSelect,
   disabled,
@@ -40,7 +40,7 @@ const Selector = <T,>({
               className={cx(style_select.button, {
                 [style_select.disabled]: disabled,
               })}
-              style={{ borderColor }}
+              style={{ color: riskColor }}
               disabled={disabled}
             >
               {capitalize(String(currentValue))}

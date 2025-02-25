@@ -8,7 +8,7 @@ export type StylingProps = {
   };
   dropdown: {
     bgColorHex: string;
-    borderConfig: {
+    riskColorConfig: {
       [RiskTypes.LOW]: string;
       [RiskTypes.MEDIUM]: string;
       [RiskTypes.HIGH]: string;
@@ -32,10 +32,7 @@ export type PlaySettingsProps = {
   disabledController: boolean;
   risks: RiskTypes[];
   currentRisk: RiskTypes;
-  currentRow: number;
-  rows: number[];
   onRiskChange: (risk: RiskTypes) => void;
-  onRowNumberChange: (row: number) => void;
   disabledMenu: boolean;
   displayController: boolean;
   playHook: () => {

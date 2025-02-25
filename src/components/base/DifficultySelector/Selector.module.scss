@@ -1,16 +1,15 @@
 .base {
-  width: 110px;
+  width: 88px;
   display: flex;
-  flex-direction: column;
+
   justify-items: center;
-  align-items: flex-start;
+  align-items: center;
   color: rgba(var(--text-color-hex), 1);
   font-weight: 400;
-  margin-bottom: 5px;
+  gap: 5px;
 }
 
 .label {
-  padding-left: 12px;
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.5px;
@@ -18,7 +17,7 @@
 }
 
 .button {
-  width: 110px;
+  width: 88px;
   height: 26px;
   font-size: 12px;
   font-weight: 600;
@@ -30,18 +29,17 @@
   align-items: center;
   justify-content: space-between;
   position: relative;
-  border: 2px solid;
   transition: all 0.7s;
 }
 
 .menu {
-  width: 110px;
+  width: 88px;
   cursor: pointer;
 }
 
 .menuItems {
   width: 100%;
-  width: 110px;
+  width: 88px;
   overflow-y: auto;
   background-color: rgba(var(--play-dropdown-bg), 1);
   padding: 4px 0px;
@@ -84,7 +82,6 @@
 
 .disabled {
   background-color: rgba(var(--play-dropdown-bg), 0.5);
-  border-color: gray;
   svg {
     opacity: 0.1;
   }

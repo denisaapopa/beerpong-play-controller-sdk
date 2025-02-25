@@ -17,6 +17,7 @@ export type Props = PropsWithChildren<ComponentProps<"input">> & {
   };
   currency: Currency;
   label?: string;
+  max?: number;
 };
 
 const InputWithIcon = ({

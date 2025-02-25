@@ -10,10 +10,24 @@ declare enum AUTO_PLAY_STATE {
   PLAYING = "playing",
 }
 
+declare enum RiskTypes {
+  LOW = "LOW",
+  MEDIUM = "MEDIUM",
+  HIGH = "HIGH",
+}
+
 type StylingProps = {
   panel: {
     top: string;
     bgColorHex: string;
+  };
+  dropdown: {
+    bgColorHex: string;
+    riskColorConfig: {
+      [RiskTypes.LOW]: string;
+      [RiskTypes.MEDIUM]: string;
+      [RiskTypes.HIGH]: string;
+    };
   };
 };
 type CurrencyProps = {
@@ -26,7 +40,12 @@ type ActionsProps = {
 };
 type PlaySettingsProps = {
   isPlaying: boolean;
+  canCashout: boolean;
   disabledController: boolean;
+  risks: RiskTypes[];
+  currentRisk: RiskTypes;
+  onRiskChange: (risk: RiskTypes) => void;
+  disabledMenu: boolean;
   displayController: boolean;
   playHook: () => {
     playLimits?: PlayLimits;

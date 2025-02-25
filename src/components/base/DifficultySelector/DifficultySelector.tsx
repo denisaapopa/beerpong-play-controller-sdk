@@ -11,26 +11,18 @@ const DifficultySelector = ({
   playOptions: PlaySettingsProps;
   dropdownConfig: {
     bgColorHex: string;
-    borderConfig: {
+    riskColorConfig: {
       [RiskTypes.LOW]: string;
       [RiskTypes.MEDIUM]: string;
       [RiskTypes.HIGH]: string;
     };
   };
 }) => {
-  const {
-    rows,
-    risks,
-    disabledMenu,
-    currentRisk,
-    currentRow,
-    onRiskChange,
-    onRowNumberChange,
-  } = playOptions;
-  const borderStyle = useRef(dropdownConfig.borderConfig[RiskTypes.LOW]);
+  const { risks, disabledMenu, currentRisk, onRiskChange } = playOptions;
+  const riskColor = useRef(dropdownConfig.riskColorConfig[RiskTypes.LOW]);
 
   function onRiskSelected(value: RiskTypes) {
-    borderStyle.current = dropdownConfig.borderConfig[value];
+    riskColor.current = dropdownConfig.riskColorConfig[value];
     onRiskChange(value);
   }
   return (
@@ -41,15 +33,7 @@ const DifficultySelector = ({
         values={risks}
         onSelect={onRiskSelected}
         disabled={disabledMenu}
-        borderColor={borderStyle.current}
-      />
-      <Selector<number>
-        currentValue={currentRow}
-        label={SELECTORS.ROWS}
-        values={rows}
-        onSelect={onRowNumberChange}
-        disabled={disabledMenu}
-        borderColor={borderStyle.current}
+        riskColor={riskColor.current}
       />
     </div>
   );

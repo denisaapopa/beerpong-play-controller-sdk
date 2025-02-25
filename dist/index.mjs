@@ -64,6 +64,7 @@ const Button = ({ disabled, className = "", theme = "primary", ...props }) => {
 Button.themes = themes;
 
 var styles_group = {
+  base: "GroupRow-module__base___b241-",
   label: "GroupRow-module__label___Du57P",
   group: "GroupRow-module__group___V7xa6",
   groupItem: "GroupRow-module__groupItem___yNSX8",
@@ -105,30 +106,37 @@ function cleanInputNumber(value) {
   return `${integerPart}.${decimalPart}`;
 }
 
-var styles$2 = {
+var styles$3 = {
   base: "Input-module__base___IifiA",
   disabled: "Input-module__disabled___WqyKa",
 };
 
-const Input = ({ onChange, disabled, className, ...restProps }) => {
+const Input = ({ onChange, disabled, className, max, ...restProps }) => {
   const handleChange = useCallback(
     (event) => {
       if (!disabled) {
-        event.target.value = cleanInputNumber(event.target.value);
+        let value = cleanInputNumber(event.target.value);
+        if (max !== undefined) {
+          const numericValue = parseFloat(value);
+          if (!isNaN(numericValue) && numericValue > max) {
+            value = max.toString();
+          }
+        }
+        event.target.value = value;
         onChange?.(event);
       }
     },
-    [disabled, onChange],
+    [disabled, onChange, max],
   );
   return jsx("input", {
     ...restProps,
     disabled: disabled,
     onChange: handleChange,
-    className: cx(styles$2.base, className, { [styles$2.disabled]: disabled }),
+    className: cx(styles$3.base, className, { [styles$3.disabled]: disabled }),
   });
 };
 
-var styles$1 = {
+var styles$2 = {
   base: "Switch-module__base___gj2ey",
   switcher: "Switch-module__switcher___gHXIx",
   gold: "Switch-module__gold___oewnb",
@@ -143,10 +151,10 @@ var styles$1 = {
 const Switch = ({ enabled, onSwitch, disabled, currency, isPlaying }) => {
   const switcherClassName = useMemo(
     () =>
-      cx(styles$1.switcher, styles$1[currency], {
-        [styles$1.checked]: enabled,
-        [styles$1.unchecked]: !enabled,
-        [styles$1.disabled]: disabled,
+      cx(styles$2.switcher, styles$2[currency], {
+        [styles$2.checked]: enabled,
+        [styles$2.unchecked]: !enabled,
+        [styles$2.disabled]: disabled,
       }),
     [enabled, currency, disabled],
   );
@@ -156,14 +164,14 @@ const Switch = ({ enabled, onSwitch, disabled, currency, isPlaying }) => {
     as: Fragment,
     disabled: isPlaying,
     children: jsxs("div", {
-      className: styles$1.base,
+      className: styles$2.base,
       children: [
-        jsx("span", { className: styles$1.label, children: "Auto" }),
+        jsx("span", { className: styles$2.label, children: "Auto" }),
         jsx("div", {
           className: switcherClassName,
           children: jsx("span", {
-            className: cx(styles$1.thumb, {
-              [styles$1["move-right"]]: enabled,
+            className: cx(styles$2.thumb, {
+              [styles$2["move-right"]]: enabled,
             }),
           }),
         }),
@@ -172,7 +180,7 @@ const Switch = ({ enabled, onSwitch, disabled, currency, isPlaying }) => {
   });
 };
 
-var styles = {
+var styles$1 = {
   base: "InputWithIcon-module__base___FwgXx",
   icon: "InputWithIcon-module__icon___KtOjW",
   input: "InputWithIcon-module__input___mQFr9",
@@ -192,8 +200,51 @@ const InputWithIcon = ({
   ...restProps
 }) => {
   return jsxs("div", {
+    className: cx(styles$1.base, className, {
+      [styles$1.disabled]: switcherConfig?.disabled,
+    }),
+    children: [
+      label &&
+        jsx("span", {
+          className: cx(styles$1.label, styles$1[currency]),
+          children: label,
+        }),
+      jsx(Input, {
+        ...restProps,
+        className: cx(styles$1.input, {
+          [styles$1.inputWithLabel]: label !== undefined,
+        }),
+        disabled: disabled,
+      }),
+      switcherConfig && jsx(Switch, { ...switcherConfig }),
+      children &&
+        jsx("div", { className: cx(styles$1.icon), children: children }),
+    ],
+  });
+};
+
+var styles = {
+  base: "InputWithSwitch-module__base___vjLoh",
+  icon: "InputWithSwitch-module__icon___upeAL",
+  input: "InputWithSwitch-module__input___K6RCD",
+  inputWithLabel: "InputWithSwitch-module__inputWithLabel___IGDgV",
+  label: "InputWithSwitch-module__label___tEjpj",
+  gold: "InputWithSwitch-module__gold___MO4qj",
+  sweeps: "InputWithSwitch-module__sweeps___jvyQd",
+};
+
+const InputWithSwitch = ({
+  children,
+  switcherConfig,
+  disabled,
+  currency,
+  label,
+  className,
+  ...restProps
+}) => {
+  return jsxs("div", {
     className: cx(styles.base, className, {
-      [styles.disabled]: switcherConfig?.disabled,
+      [styles.disabled]: switcherConfig.disabled,
     }),
     children: [
       label &&
@@ -201,16 +252,14 @@ const InputWithIcon = ({
           className: cx(styles.label, styles[currency]),
           children: label,
         }),
+      jsx(Switch, { ...switcherConfig }),
       jsx(Input, {
         ...restProps,
-        className: cx(styles.input, {
-          [styles.inputWithLabel]: label !== undefined,
-        }),
+        className: cx(styles.input),
         disabled: disabled,
+        max: 99,
       }),
-      switcherConfig && jsx(Switch, { ...switcherConfig }),
-      children &&
-        jsx("div", { className: cx(styles.icon), children: children }),
+      jsx("div", { className: cx(styles.icon), children: children }),
     ],
   });
 };
@@ -271,7 +320,7 @@ const SweepsIcon = () =>
     ],
   });
 
-var style_select = {
+var style_select$1 = {
   button: "SelectMenu-module__button___N-HeB",
   menu: "SelectMenu-module__menu___c5jvZ",
   menuItems: "SelectMenu-module__menuItems___BX1YQ",
@@ -304,7 +353,7 @@ const ChevronIcon = ({ open, disabled }) => {
   });
 };
 
-const capitalize = (str) =>
+const capitalize$1 = (str) =>
   str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
 const getIcon = (option) =>
   option === Currency.SWEEPS ? jsx(SweepsIcon, {}) : jsx(GoldIcon, {});
@@ -327,13 +376,13 @@ const SelectMenu = ({
   };
   return jsx(Menu, {
     as: "div",
-    className: cx(style_select.menu),
+    className: cx(style_select$1.menu),
     children: ({ open }) =>
       jsxs(Fragment$1, {
         children: [
           jsxs(MenuButton, {
-            className: cx(style_select.button, {
-              [style_select.disabled]: disabled,
+            className: cx(style_select$1.button, {
+              [style_select$1.disabled]: disabled,
             }),
             disabled: disabled,
             children: [
@@ -342,8 +391,8 @@ const SelectMenu = ({
             ],
           }),
           jsx(MenuItems, {
-            anchor: { to: "right end" },
-            className: cx(style_select.menuItems),
+            anchor: { to: "top start" },
+            className: cx(style_select$1.menuItems),
             children: currencies.map((option) =>
               jsxs(
                 MenuItem,
@@ -351,11 +400,11 @@ const SelectMenu = ({
                   as: "div",
                   "data-value": option,
                   onClick: handleClick,
-                  className: cx(style_select.menuItem, {
-                    [style_select.selected]:
+                  className: cx(style_select$1.menuItem, {
+                    [style_select$1.selected]:
                       String(selectedCurrency) === String(option),
                   }),
-                  children: [getIcon(option), capitalize(String(option))],
+                  children: [getIcon(option), capitalize$1(String(option))],
                 },
                 `element-${option}`,
               ),
@@ -380,6 +429,7 @@ const useAutoManualPlayState = () => {
 const usePlayController = () => {
   const {
     config,
+    mode,
     autoPlay: {
       setNumberOfPlays,
       numberOfPlays,
@@ -392,8 +442,10 @@ const usePlayController = () => {
   const { currentCurrency, currencies } = config.currencyOptions;
   const {
     isPlaying,
+    canCashout,
     disabledController,
-    autoPlayDelay = 500,
+    disabledMenu,
+    autoPlayDelay = 1000,
     playHook,
   } = config.playOptions;
   const { playAmount, playLimits, setPlayAmount } = playHook?.() ?? {};
@@ -441,7 +493,7 @@ const usePlayController = () => {
     setState(AUTO_PLAY_STATE.PLAYING);
     loopRounds(playedRounds, numberOfPlays);
   };
-  const isDisabled = () => disabledController || isPlaying;
+  const isDisabled = () => disabledController || isPlaying || disabledMenu;
   const isAutoplayDisabled = () =>
     disabledController || state === AUTO_PLAY_STATE.PLAYING;
   const adjustPlayAmount = (multiplier) => {
@@ -481,9 +533,11 @@ const usePlayController = () => {
     onBlurAmount,
     playOptions: config.playOptions,
     isValidPlayAmount,
+    mode,
     manualPlay: {
       isDisabled,
       onPlay: config.onPlay,
+      canCashout,
     },
     autoPlay: {
       isDisabled: isAutoplayDisabled,
@@ -493,6 +547,18 @@ const usePlayController = () => {
     },
   };
 };
+
+var SELECTORS;
+(function (SELECTORS) {
+  SELECTORS["ROWS"] = "Rows";
+  SELECTORS["RISK"] = "Risk";
+})(SELECTORS || (SELECTORS = {}));
+var RiskTypes;
+(function (RiskTypes) {
+  RiskTypes["LOW"] = "LOW";
+  RiskTypes["MEDIUM"] = "MEDIUM";
+  RiskTypes["HIGH"] = "HIGH";
+})(RiskTypes || (RiskTypes = {}));
 
 const PLAY_HALVE = 0.5;
 const PLAY_DOUBLE = 2;
@@ -638,6 +704,7 @@ var styles_ui = {
   base: "UI-module__base___wThyQ",
   betForm: "UI-module__betForm___hQkYd",
   disabled: "UI-module__disabled___dnZJX",
+  auto: "UI-module__auto___5peb8",
 };
 
 const hexToRgb = (hex) => {
@@ -649,8 +716,111 @@ const hexToRgb = (hex) => {
     : null;
 };
 
+var style_difficulty = { base: "DifficultySelector-module__base___lDaQ-" };
+
+var style_select = {
+  base: "Selector-module__base___-q0yf",
+  label: "Selector-module__label___JJdbd",
+  button: "Selector-module__button___MeRoC",
+  menu: "Selector-module__menu___P0ROg",
+  menuItems: "Selector-module__menuItems___chFk2",
+  menuItem: "Selector-module__menuItem___isa4c",
+  selected: "Selector-module__selected___nUJtR",
+  disabled: "Selector-module__disabled___f1qGJ",
+};
+
+const capitalize = (str) =>
+  str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+const Selector = ({
+  currentValue,
+  label,
+  riskColor,
+  values,
+  onSelect,
+  disabled,
+}) => {
+  const handleClick = (e) => {
+    if (disabled) {
+      return;
+    }
+    const target = e.target;
+    const value = target.dataset.value;
+    if (!value) {
+      return;
+    }
+    onSelect(value);
+  };
+  return jsxs("div", {
+    className: cx(style_select.base),
+    children: [
+      label &&
+        jsx("span", { className: cx(style_select.label), children: label }),
+      jsx(Menu, {
+        as: "div",
+        className: cx(style_select.menu),
+        children: ({ open }) =>
+          jsxs(Fragment$1, {
+            children: [
+              jsxs(MenuButton, {
+                className: cx(style_select.button, {
+                  [style_select.disabled]: disabled,
+                }),
+                style: { color: riskColor },
+                disabled: disabled,
+                children: [
+                  capitalize(String(currentValue)),
+                  jsx(ChevronIcon, { open: open, disabled: disabled }),
+                ],
+              }),
+              jsx(MenuItems, {
+                anchor: { to: "top start" },
+                className: cx(style_select.menuItems),
+                children: values.map((value) =>
+                  jsx(
+                    MenuItem,
+                    {
+                      as: "div",
+                      "data-value": value,
+                      onClick: handleClick,
+                      className: cx(style_select.menuItem, {
+                        [style_select.selected]:
+                          String(currentValue) === String(value),
+                      }),
+                      children: capitalize(String(value)),
+                    },
+                    `element-${value}`,
+                  ),
+                ),
+              }),
+            ],
+          }),
+      }),
+    ],
+  });
+};
+
+const DifficultySelector = ({ playOptions, dropdownConfig }) => {
+  const { risks, disabledMenu, currentRisk, onRiskChange } = playOptions;
+  const riskColor = useRef(dropdownConfig.riskColorConfig[RiskTypes.LOW]);
+  function onRiskSelected(value) {
+    riskColor.current = dropdownConfig.riskColorConfig[value];
+    onRiskChange(value);
+  }
+  return jsx("div", {
+    className: style_difficulty.base,
+    children: jsx(Selector, {
+      currentValue: currentRisk,
+      label: SELECTORS.RISK,
+      values: risks,
+      onSelect: onRiskSelected,
+      disabled: disabledMenu,
+      riskColor: riskColor.current,
+    }),
+  });
+};
+
 const AutoManualPlayProvider = ({ children, config }) => {
-  const [mode, setMode] = useState(GAME_MODE.MANUAL);
+  const [mode, setMode] = useState(GAME_MODE.AUTOPLAY);
   const [autoplayState, setAutoplayState] = useState(AUTO_PLAY_STATE.IDLE);
   const [isAutoPlaying, setIsAutoPlaying] = useState(false);
   const [playedRounds, setPlayedRounds] = useState(0);
@@ -738,36 +908,50 @@ const AutoManualPlayProvider = ({ children, config }) => {
           style: {
             "--play-top": config.panel.top,
             "--play-panel-bg": hexToRgb(config.panel.bgColorHex ?? "#01243A"),
+            "--play-dropdown-bg": hexToRgb(
+              config.dropdown.bgColorHex ?? "#01243A",
+            ),
           },
           children: [
-            jsx(InputWithIcon, {
-              value: numberOfPlays === Infinity ? 0 : numberOfPlays,
-              type: "number",
-              onChange: (e) => setNumberOfPlays(Number(e.currentTarget.value)),
-              placeholder: "Number of Plays",
-              min: 0,
-              disabled:
-                config.playOptions.disabledController ||
-                mode === GAME_MODE.MANUAL,
-              currency: config.currencyOptions.currentCurrency,
-              switcherConfig: {
-                onSwitch: toggleMode,
-                isPlaying: isAutoPlaying || config.playOptions.isPlaying,
-                enabled: mode !== GAME_MODE.MANUAL,
-                currency: config.currencyOptions.currentCurrency,
-                disabled:
-                  config.playOptions.disabledController ||
-                  autoplayState === AUTO_PLAY_STATE.PLAYING,
-              },
-              children: jsx("span", {
-                className: cx({
-                  [styles_ui.disabled]:
-                    mode !== GAME_MODE.AUTOPLAY ||
-                    numberOfPlays !== Infinity ||
-                    autoplayState === AUTO_PLAY_STATE.PLAYING,
+            jsxs("div", {
+              className: cx(styles_ui.auto),
+              children: [
+                jsx(DifficultySelector, {
+                  playOptions: config.playOptions,
+                  dropdownConfig: config.dropdown,
                 }),
-                children: `∞`,
-              }),
+                jsx(InputWithSwitch, {
+                  value: numberOfPlays === Infinity ? 0 : numberOfPlays,
+                  type: "number",
+                  onChange: (e) =>
+                    setNumberOfPlays(Number(e.currentTarget.value)),
+                  placeholder: "Number of Plays",
+                  min: 0,
+                  max: 99,
+                  disabled:
+                    config.playOptions.disabledController ||
+                    mode === GAME_MODE.MANUAL,
+                  currency: config.currencyOptions.currentCurrency,
+                  switcherConfig: {
+                    onSwitch: toggleMode,
+                    isPlaying: isAutoPlaying || config.playOptions.isPlaying,
+                    enabled: mode !== GAME_MODE.MANUAL,
+                    currency: config.currencyOptions.currentCurrency,
+                    disabled:
+                      config.playOptions.disabledController ||
+                      autoplayState === AUTO_PLAY_STATE.PLAYING,
+                  },
+                  children: jsx("span", {
+                    className: cx({
+                      [styles_ui.disabled]:
+                        mode !== GAME_MODE.AUTOPLAY ||
+                        numberOfPlays !== Infinity ||
+                        autoplayState === AUTO_PLAY_STATE.PLAYING,
+                    }),
+                    children: `∞`,
+                  }),
+                }),
+              ],
             }),
             mode === GAME_MODE.MANUAL
               ? jsx(ManualPlayController, {})

@@ -3,7 +3,6 @@ import cx from "classnames";
 
 import { AUTO_PLAY_STATE, GAME_MODE } from "../../types/gameMode";
 import { PlayControllerProps } from "../../types/playController";
-import { InputWithIcon } from "../base";
 
 import AutoPlayController from "../base/AutoPlayController";
 import ManualPlayController from "../base/ManualPlayController";
@@ -16,6 +15,7 @@ import {
 import { hexToRgb } from "../utils";
 
 import DifficultySelector from "../base/DifficultySelector/DifficultySelector";
+import InputWithSwitch from "../base/InputWithSwitch";
 
 interface AutoManualPlayStateProviderProps {
   children:
@@ -28,7 +28,7 @@ const AutoManualPlayProvider: React.FC<AutoManualPlayStateProviderProps> = ({
   children,
   config,
 }) => {
-  const [mode, setMode] = useState<GAME_MODE>(GAME_MODE.MANUAL);
+  const [mode, setMode] = useState<GAME_MODE>(GAME_MODE.AUTOPLAY);
   const [autoplayState, setAutoplayState] = useState<AUTO_PLAY_STATE>(
     AUTO_PLAY_STATE.IDLE,
   );
@@ -133,39 +133,43 @@ const AutoManualPlayProvider: React.FC<AutoManualPlayStateProviderProps> = ({
             } as React.CSSProperties
           }
         >
-          <DifficultySelector
-            playOptions={config.playOptions}
-            dropdownConfig={config.dropdown}
-          />
-          <InputWithIcon
-            value={numberOfPlays === Infinity ? 0 : numberOfPlays}
-            type="number"
-            onChange={(e) => setNumberOfPlays(Number(e.currentTarget.value))}
-            placeholder="Number of Plays"
-            min={0}
-            disabled={
-              config.playOptions.disabledController || mode === GAME_MODE.MANUAL
-            }
-            currency={config.currencyOptions.currentCurrency}
-            switcherConfig={{
-              onSwitch: toggleMode,
-              isPlaying: isAutoPlaying || config.playOptions.isPlaying,
-              enabled: mode !== GAME_MODE.MANUAL,
-              currency: config.currencyOptions.currentCurrency,
-              disabled:
+          <div className={cx(styles_ui.auto)}>
+            <DifficultySelector
+              playOptions={config.playOptions}
+              dropdownConfig={config.dropdown}
+            />
+            <InputWithSwitch
+              value={numberOfPlays === Infinity ? 0 : numberOfPlays}
+              type="number"
+              onChange={(e) => setNumberOfPlays(Number(e.currentTarget.value))}
+              placeholder="Number of Plays"
+              min={0}
+              max={99}
+              disabled={
                 config.playOptions.disabledController ||
-                autoplayState === AUTO_PLAY_STATE.PLAYING,
-            }}
-          >
-            <span
-              className={cx({
-                [styles_ui.disabled]:
-                  mode !== GAME_MODE.AUTOPLAY ||
-                  numberOfPlays !== Infinity ||
+                mode === GAME_MODE.MANUAL
+              }
+              currency={config.currencyOptions.currentCurrency}
+              switcherConfig={{
+                onSwitch: toggleMode,
+                isPlaying: isAutoPlaying || config.playOptions.isPlaying,
+                enabled: mode !== GAME_MODE.MANUAL,
+                currency: config.currencyOptions.currentCurrency,
+                disabled:
+                  config.playOptions.disabledController ||
                   autoplayState === AUTO_PLAY_STATE.PLAYING,
-              })}
-            >{`∞`}</span>
-          </InputWithIcon>
+              }}
+            >
+              <span
+                className={cx({
+                  [styles_ui.disabled]:
+                    mode !== GAME_MODE.AUTOPLAY ||
+                    numberOfPlays !== Infinity ||
+                    autoplayState === AUTO_PLAY_STATE.PLAYING,
+                })}
+              >{`∞`}</span>
+            </InputWithSwitch>
+          </div>
 
           {mode === GAME_MODE.MANUAL ? (
             <ManualPlayController />

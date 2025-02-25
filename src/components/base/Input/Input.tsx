@@ -4,20 +4,27 @@ import React, { useCallback } from "react";
 import { cleanInputNumber } from "./cleanInputNumber";
 import styles from "./Input.module.scss";
 
-const Input = ({
-  onChange,
-  disabled,
-  className,
-  ...restProps
-}: React.ComponentProps<"input">) => {
+type Props = React.ComponentProps<"input"> & {
+  max?: number;
+};
+const Input = ({ onChange, disabled, className, max, ...restProps }: Props) => {
   const handleChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       if (!disabled) {
-        event.target.value = cleanInputNumber(event.target.value);
+        let value = cleanInputNumber(event.target.value);
+
+        if (max !== undefined) {
+          const numericValue = parseFloat(value);
+          if (!isNaN(numericValue) && numericValue > max) {
+            value = max.toString();
+          }
+        }
+
+        event.target.value = value;
         onChange?.(event);
       }
     },
-    [disabled, onChange],
+    [disabled, onChange, max],
   );
 
   return (

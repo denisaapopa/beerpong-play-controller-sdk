@@ -5,6 +5,7 @@ import { ChangeEvent, FocusEvent, useRef } from "react";
 export const usePlayController = () => {
   const {
     config,
+    mode,
     autoPlay: {
       setNumberOfPlays,
       numberOfPlays,
@@ -20,7 +21,7 @@ export const usePlayController = () => {
     canCashout,
     disabledController,
     disabledMenu,
-    autoPlayDelay = 500,
+    autoPlayDelay = 1000,
     playHook,
   } = config.playOptions;
 
@@ -124,6 +125,7 @@ export const usePlayController = () => {
     onBlurAmount,
     playOptions: config.playOptions,
     isValidPlayAmount,
+    mode,
     manualPlay: {
       isDisabled,
       onPlay: config.onPlay,
