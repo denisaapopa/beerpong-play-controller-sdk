@@ -28,7 +28,7 @@ const AutoManualPlayProvider: React.FC<AutoManualPlayStateProviderProps> = ({
   children,
   config,
 }) => {
-  const [mode, setMode] = useState<GAME_MODE>(GAME_MODE.AUTOPLAY);
+  const [mode, setMode] = useState<GAME_MODE>(GAME_MODE.MANUAL);
   const [autoplayState, setAutoplayState] = useState<AUTO_PLAY_STATE>(
     AUTO_PLAY_STATE.IDLE,
   );
