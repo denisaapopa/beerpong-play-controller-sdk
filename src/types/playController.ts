@@ -22,8 +22,8 @@ export type CurrencyProps = {
 };
 
 export type ActionsProps = {
-  onPlay: (left: boolean) => void;
-  onAutoPlay: (next: () => void, stop: () => void, left: boolean) => void;
+  onPlay: (side: PlaySide) => void;
+  onAutoPlay: (next: () => void, stop: () => void, side: PlaySide) => void;
 };
 
 export type PlaySettingsProps = {
@@ -35,6 +35,7 @@ export type PlaySettingsProps = {
   onRiskChange: (risk: RiskTypes) => void;
   disabledMenu: boolean;
   displayController: boolean;
+  lastPlayedSide: PlaySide;
   playHook: () => {
     playLimits?: PlayLimits;
     leftPlayAmount: number;
@@ -53,3 +54,8 @@ export type PlayControllerProps = StylingProps &
 
 export const PLAY_HALVE = 0.5;
 export const PLAY_DOUBLE = 2;
+
+export enum PlaySide {
+  LEFT = "LEFT",
+  RIGHT = "RIGHT",
+}

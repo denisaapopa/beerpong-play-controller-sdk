@@ -7,8 +7,13 @@ import Button from "../Button";
 
 import styles_button from "../Button/Button.module.scss";
 import styles_group from "./ManualPlayController.module.scss";
+import { PlaySide } from "../../../types/playController";
 
-const ManualPlayController = ({ left = true }: { left?: boolean }) => {
+const ManualPlayController = ({
+  side = PlaySide.LEFT,
+}: {
+  side?: PlaySide;
+}) => {
   const {
     currentCurrency,
     currencies,
@@ -20,7 +25,7 @@ const ManualPlayController = ({ left = true }: { left?: boolean }) => {
     onChangeAmount,
     onBlurAmount,
     manualPlay: { isDisabled, onPlay },
-  } = usePlayController(left);
+  } = usePlayController(side);
 
   return (
     <div className={cx(styles_group.base)}>
@@ -43,7 +48,7 @@ const ManualPlayController = ({ left = true }: { left?: boolean }) => {
           [styles_button.buttonSweeps]: currentCurrency !== Currency.GOLD,
           [styles_button.overlap]: true,
         })}
-        onClick={() => onPlay(left)}
+        onClick={() => onPlay(side)}
       >
         Play
       </Button>

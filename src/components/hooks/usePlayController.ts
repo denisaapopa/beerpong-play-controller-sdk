@@ -1,9 +1,9 @@
-/* eslint-disable @typescript-eslint/no-shadow */
 import { AUTO_PLAY_STATE } from "../../types";
+import { PlaySide } from "../../types/playController";
 import { useAutoManualPlayState } from "../AutoManualPlayStateProvider/AutoManualPlayStateContext";
 import { ChangeEvent, FocusEvent, useRef } from "react";
 
-export const usePlayController = (left: boolean) => {
+export const usePlayController = (side: PlaySide) => {
   const {
     config,
     mode,
@@ -38,8 +38,9 @@ export const usePlayController = (left: boolean) => {
   const playIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const isAutoplayActiveRef = useRef(false);
 
-  const playAmount = left ? leftPlayAmount : rightPlayAmount;
-  const setPlayAmount = left ? setLeftBetAmount : setRightBetAmount;
+  const playAmount = side === PlaySide.LEFT ? leftPlayAmount : rightPlayAmount;
+  const setPlayAmount =
+    side === PlaySide.LEFT ? setLeftBetAmount : setRightBetAmount;
 
   const stopAutoplay = () => {
     isAutoplayActiveRef.current = false;
@@ -56,7 +57,7 @@ export const usePlayController = (left: boolean) => {
   const loopRounds = (
     currentPlayedRounds: number,
     remainingPlays: number,
-    left: boolean,
+    playSide: PlaySide,
   ) => {
     if (!isAutoplayActiveRef.current) {
       return;
@@ -78,16 +79,17 @@ export const usePlayController = (left: boolean) => {
         }
 
         playIntervalRef.current = setTimeout(
-          () => loopRounds(currentPlayedRounds + 1, remainingPlays - 1, left),
+          () =>
+            loopRounds(currentPlayedRounds + 1, remainingPlays - 1, playSide),
           autoPlayDelay,
         );
       },
       stopAutoplay,
-      left,
+      playSide,
     );
   };
 
-  const handleAutoPlay = (left: boolean) => {
+  const handleAutoPlay = (playSide: PlaySide) => {
     if (disabledController) {
       return;
     }
@@ -95,7 +97,7 @@ export const usePlayController = (left: boolean) => {
     isAutoplayActiveRef.current = true;
     setState(AUTO_PLAY_STATE.PLAYING);
 
-    loopRounds(playedRounds, numberOfPlays, left);
+    loopRounds(playedRounds, numberOfPlays, playSide);
   };
 
   const isDisabled = () => disabledController || isPlaying || disabledMenu;
@@ -146,7 +148,7 @@ export const usePlayController = (left: boolean) => {
     mode,
     manualPlay: {
       isDisabled,
-      onPlay: (left: boolean) => config.onPlay(left),
+      onPlay: (playSide: PlaySide) => config.onPlay(playSide),
       canCashout,
     },
     autoPlay: {
