@@ -137,7 +137,12 @@ const AutoManualPlayProvider: React.FC<AutoManualPlayStateProviderProps> = ({
         >
           <div className={cx(styles_ui.auto)}>
             <DifficultySelector
-              playOptions={config.playOptions}
+              playOptions={{
+                ...config.playOptions,
+                disabledMenu:
+                  config.playOptions.disabledController ||
+                  autoplayState === AUTO_PLAY_STATE.PLAYING,
+              }}
               dropdownConfig={config.dropdown}
             />
             <InputWithSwitch

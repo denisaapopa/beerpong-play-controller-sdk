@@ -24,6 +24,7 @@ export const usePlayController = (side: PlaySide) => {
     disabledMenu,
     autoPlayDelay = 1000,
     playHook,
+    lastPlayedSide,
   } = config.playOptions;
 
   const {
@@ -100,7 +101,10 @@ export const usePlayController = (side: PlaySide) => {
     loopRounds(playedRounds, numberOfPlays, playSide);
   };
 
-  const isDisabled = () => disabledController || isPlaying || disabledMenu;
+  const isDisabled = () =>
+    (disabledController || isPlaying || disabledMenu) &&
+    side !== lastPlayedSide;
+
   const isAutoplayDisabled = () =>
     disabledController || state === AUTO_PLAY_STATE.PLAYING;
 
