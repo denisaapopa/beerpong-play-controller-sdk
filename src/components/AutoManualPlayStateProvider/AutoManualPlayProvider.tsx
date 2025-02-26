@@ -1,8 +1,15 @@
-import { ReactElement, useCallback, useState, useMemo } from "react";
+import {
+  ReactElement,
+  useCallback,
+  useState,
+  useMemo,
+  useEffect,
+  useRef,
+} from "react";
 import cx from "classnames";
 
 import { AUTO_PLAY_STATE, GAME_MODE } from "../../types/gameMode";
-import { PlayControllerProps } from "../../types/playController";
+import { PlayControllerProps, PlaySide } from "../../types/playController";
 
 import AutoPlayController from "../base/AutoPlayController";
 import ManualMultiPlayController from "../base/ManualMultiPlayController";
@@ -36,11 +43,13 @@ const AutoManualPlayProvider: React.FC<AutoManualPlayStateProviderProps> = ({
   const [playedRounds, setPlayedRounds] = useState(0);
   const [numberOfPlays, setNumberOfPlays] = useState(Infinity);
 
+  const lastPlayedSide = useRef<PlaySide>(config.playOptions.lastPlayedSide);
+
   const startAutoplay = useCallback((numPlays: number) => {
     setMode(GAME_MODE.AUTOPLAY);
     setAutoplayState(AUTO_PLAY_STATE.PLAYING);
     setNumberOfPlays(numPlays);
-    setPlayedRounds(0); // Reset when starting autoplay
+    setPlayedRounds(0);
   }, []);
 
   const stopAutoplay = useCallback(() => {
@@ -115,6 +124,41 @@ const AutoManualPlayProvider: React.FC<AutoManualPlayStateProviderProps> = ({
       toggleMode,
     ],
   );
+
+  const handleKeyPress = useCallback(
+    (event: KeyboardEvent) => {
+      const activeElement = document.activeElement as HTMLElement | null;
+
+      if (activeElement && activeElement.tagName !== "BUTTON") {
+        return;
+      }
+
+      if (event.code === "Space") {
+        event.preventDefault();
+        event.stopPropagation();
+
+        if (activeElement?.getAttribute("data-role") === "primary-button") {
+          if (mode === GAME_MODE.MANUAL) {
+            config.onPlay(lastPlayedSide.current);
+          }
+        } else {
+          event.stopImmediatePropagation();
+        }
+      }
+    },
+    [config, mode],
+  );
+
+  useEffect(() => {
+    window.addEventListener("keydown", handleKeyPress, true);
+    return () => {
+      window.removeEventListener("keydown", handleKeyPress, true);
+    };
+  }, [handleKeyPress]);
+
+  useEffect(() => {
+    lastPlayedSide.current = config.playOptions.lastPlayedSide;
+  }, [config.playOptions.lastPlayedSide]);
 
   return (
     <AutoManualPlayStateContext.Provider value={contextValue}>
