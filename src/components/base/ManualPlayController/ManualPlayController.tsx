@@ -18,6 +18,7 @@ const ManualPlayController = ({
     currentCurrency,
     currencies,
     playAmount,
+    playOptions,
     minPlayAmount,
     maxPlayAmount,
     isValidPlayAmount,
@@ -39,6 +40,7 @@ const ManualPlayController = ({
         onBlurAmount={onBlurAmount}
         currentCurrency={currentCurrency}
         currencies={currencies}
+        disableInput={playOptions.disableInput}
       />
 
       <Button

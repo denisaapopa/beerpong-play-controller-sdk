@@ -36,6 +36,7 @@ export type PlaySettingsProps = {
   disabledMenu: boolean;
   displayController: boolean;
   lastPlayedSide: PlaySide;
+  disableInput: boolean;
   playHook: () => {
     playLimits?: PlayLimits;
     leftPlayAmount: number;

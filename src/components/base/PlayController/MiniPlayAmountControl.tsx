@@ -21,6 +21,7 @@ interface MiniPlayAmountControlProps {
   onBlurAmount: (event: React.FocusEvent<HTMLInputElement>) => void;
   currentCurrency: Currency;
   currencies: Currency[];
+  disableInput: boolean;
 }
 
 const MiniPlayAmountControl = ({
@@ -33,6 +34,7 @@ const MiniPlayAmountControl = ({
   onBlurAmount,
   currentCurrency,
   currencies,
+  disableInput,
 }: MiniPlayAmountControlProps) => {
   return (
     <div className={cx(styles_group.base)}>
@@ -63,7 +65,7 @@ const MiniPlayAmountControl = ({
         placeholder={minPlayAmount.toString()}
         max={maxPlayAmount}
         min={minPlayAmount}
-        disabled={isDisabled()}
+        disabled={isDisabled() || disableInput}
         currency={currentCurrency}
         label="Play Amount"
       >

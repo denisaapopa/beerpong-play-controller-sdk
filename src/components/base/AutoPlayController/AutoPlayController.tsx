@@ -19,6 +19,7 @@ const AutoPlayController = ({ side = PlaySide.LEFT }: { side?: PlaySide }) => {
     adjustPlayAmount,
     onChangeAmount,
     onBlurAmount,
+    playOptions,
     autoPlay: { isDisabled, state, onPlay, onStopPlay },
   } = usePlayController(side);
 
@@ -34,6 +35,7 @@ const AutoPlayController = ({ side = PlaySide.LEFT }: { side?: PlaySide }) => {
         onBlurAmount={onBlurAmount}
         currentCurrency={currentCurrency}
         currencies={currencies}
+        disableInput={playOptions.disableInput}
       />
 
       {state === AUTO_PLAY_STATE.PLAYING ? (

@@ -21,6 +21,7 @@ interface PlayAmountControlProps {
   onBlurAmount: (event: React.FocusEvent<HTMLInputElement>) => void;
   currentCurrency: Currency;
   currencies: Currency[];
+  disableInput: boolean;
 }
 
 const PlayAmountControl = ({
@@ -33,6 +34,7 @@ const PlayAmountControl = ({
   onBlurAmount,
   currentCurrency,
   currencies,
+  disableInput,
 }: PlayAmountControlProps) => {
   return (
     <GroupRow>
@@ -45,7 +47,7 @@ const PlayAmountControl = ({
         placeholder={minPlayAmount.toString()}
         max={maxPlayAmount}
         min={minPlayAmount}
-        disabled={isDisabled()}
+        disabled={isDisabled() || disableInput}
         currency={currentCurrency}
         label="Play Amount"
       >
