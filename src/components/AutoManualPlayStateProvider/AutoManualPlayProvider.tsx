@@ -1,15 +1,8 @@
-import {
-  ReactElement,
-  useCallback,
-  useState,
-  useMemo,
-  useEffect,
-  useRef,
-} from "react";
+import { ReactElement, useCallback, useState, useMemo } from "react";
 import cx from "classnames";
 
 import { AUTO_PLAY_STATE, GAME_MODE } from "../../types/gameMode";
-import { PlayControllerProps, PlaySide } from "../../types/playController";
+import { PlayControllerProps } from "../../types/playController";
 
 import AutoPlayController from "../base/AutoPlayController";
 import ManualMultiPlayController from "../base/ManualMultiPlayController";
@@ -42,8 +35,6 @@ const AutoManualPlayProvider: React.FC<AutoManualPlayStateProviderProps> = ({
   const [isAutoPlaying, setIsAutoPlaying] = useState(false);
   const [playedRounds, setPlayedRounds] = useState(0);
   const [numberOfPlays, setNumberOfPlays] = useState(Infinity);
-
-  const lastPlayedSide = useRef<PlaySide>(config.playOptions.lastPlayedSide);
 
   const startAutoplay = useCallback((numPlays: number) => {
     setMode(GAME_MODE.AUTOPLAY);
@@ -125,41 +116,6 @@ const AutoManualPlayProvider: React.FC<AutoManualPlayStateProviderProps> = ({
     ],
   );
 
-  const handleKeyPress = useCallback(
-    (event: KeyboardEvent) => {
-      const activeElement = document.activeElement as HTMLElement | null;
-
-      if (activeElement && activeElement.tagName !== "BUTTON") {
-        return;
-      }
-
-      if (event.code === "Space") {
-        event.preventDefault();
-        event.stopPropagation();
-
-        if (activeElement?.getAttribute("data-role") === "primary-button") {
-          if (mode === GAME_MODE.MANUAL) {
-            config.onPlay(lastPlayedSide.current);
-          }
-        } else {
-          event.stopImmediatePropagation();
-        }
-      }
-    },
-    [config, mode],
-  );
-
-  useEffect(() => {
-    window.addEventListener("keydown", handleKeyPress, true);
-    return () => {
-      window.removeEventListener("keydown", handleKeyPress, true);
-    };
-  }, [handleKeyPress]);
-
-  useEffect(() => {
-    lastPlayedSide.current = config.playOptions.lastPlayedSide;
-  }, [config.playOptions.lastPlayedSide]);
-
   return (
     <AutoManualPlayStateContext.Provider value={contextValue}>
       {typeof children === "function" ? children(contextValue) : children}
@@ -223,7 +179,9 @@ const AutoManualPlayProvider: React.FC<AutoManualPlayStateProviderProps> = ({
           </div>
 
           {mode === GAME_MODE.MANUAL ? (
-            <ManualMultiPlayController />
+            <ManualMultiPlayController
+              lastPlayedSide={config.playOptions.lastPlayedSide}
+            />
           ) : (
             <AutoPlayController />
           )}

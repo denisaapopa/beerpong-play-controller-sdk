@@ -16,6 +16,7 @@ export const usePlayController = (side: PlaySide) => {
       state,
     },
   } = useAutoManualPlayState();
+
   const { currentCurrency, currencies } = config.currencyOptions;
   const {
     isPlaying,
@@ -150,6 +151,7 @@ export const usePlayController = (side: PlaySide) => {
     playOptions: config.playOptions,
     isValidPlayAmount,
     mode,
+    lastPlayedSide,
     manualPlay: {
       isDisabled,
       onPlay: (playSide: PlaySide) => config.onPlay(playSide),

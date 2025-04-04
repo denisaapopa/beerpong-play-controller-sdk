@@ -5,11 +5,21 @@ import ManualPlayController from "../ManualPlayController";
 import style_multi from "./ManualMultiPlayController.module.scss";
 import { PlaySide } from "../../../types/playController";
 
-const ManualMultiPlayController = () => {
+const ManualMultiPlayController = ({
+  lastPlayedSide,
+}: {
+  lastPlayedSide: PlaySide;
+}) => {
   return (
     <div className={cx(style_multi.base)}>
-      <ManualPlayController side={PlaySide.LEFT} />
-      <ManualPlayController side={PlaySide.RIGHT} />
+      <ManualPlayController
+        side={PlaySide.LEFT}
+        lastPlayedSide={lastPlayedSide}
+      />
+      <ManualPlayController
+        side={PlaySide.RIGHT}
+        lastPlayedSide={lastPlayedSide}
+      />
     </div>
   );
 };

@@ -1,12 +1,14 @@
 import { Currency } from "@enigma-lake/zoot-platform-sdk";
 
 import { usePlayController } from "../../hooks/usePlayController";
-import { AUTO_PLAY_STATE } from "../../../types";
+import { AUTO_PLAY_STATE, GAME_MODE } from "../../../types";
 import PlayAmountControl from "../PlayController/PlayController";
 import Button from "../Button";
 
 import styles_button from "../Button/Button.module.scss";
 import { PlaySide } from "../../../types/playController";
+import { useCallback, useEffect, useMemo } from "react";
+import { selectButton, addPressedClass, removePressedClass } from "../../utils";
 
 const AutoPlayController = ({ side = PlaySide.LEFT }: { side?: PlaySide }) => {
   const {
@@ -22,6 +24,86 @@ const AutoPlayController = ({ side = PlaySide.LEFT }: { side?: PlaySide }) => {
     playOptions,
     autoPlay: { isDisabled, state, onPlay, onStopPlay },
   } = usePlayController(side);
+  const roleButton = GAME_MODE.AUTOPLAY;
+
+  const activeClassName = useMemo(() => {
+    const baseClass =
+      currentCurrency === Currency.GOLD
+        ? styles_button.buttonGold__active
+        : styles_button.buttonSweeps__active;
+
+    return baseClass;
+  }, [currentCurrency]);
+
+  const getClassName = useMemo(() => {
+    if (state === AUTO_PLAY_STATE.PLAYING) {
+      return styles_button.buttonCashout;
+    }
+    return currentCurrency === Currency.GOLD
+      ? styles_button.buttonGold
+      : styles_button.buttonSweeps;
+  }, [currentCurrency, state]);
+
+  const handleKeyPress = useCallback(
+    (event: KeyboardEvent) => {
+      if (event.code !== "Space") {
+        return;
+      }
+
+      const button = selectButton(roleButton);
+      if (!button) {
+        return;
+      }
+
+      event.preventDefault();
+      event.stopPropagation();
+
+      const canTrigger = !isDisabled() || state === AUTO_PLAY_STATE.PLAYING;
+
+      if (canTrigger) {
+        addPressedClass(roleButton, activeClassName, side);
+        button.click();
+      }
+    },
+    [activeClassName, isDisabled, roleButton, state, side],
+  );
+
+  const handleKeyUp = useCallback(
+    (event: KeyboardEvent) => {
+      if (event.code !== "Space") {
+        return;
+      }
+
+      const button = selectButton(roleButton);
+      if (!button) {
+        return;
+      }
+
+      event.preventDefault();
+      event.stopPropagation();
+      removePressedClass(roleButton, activeClassName, side);
+    },
+    [activeClassName, roleButton, side],
+  );
+
+  useEffect(() => {
+    window.addEventListener("keydown", handleKeyPress, true);
+    window.addEventListener("keyup", handleKeyUp, true);
+    return () => {
+      window.removeEventListener("keydown", handleKeyPress, true);
+      window.removeEventListener("keyup", handleKeyUp, true);
+    };
+  }, [handleKeyPress, handleKeyUp]);
+
+  const isButtonDisabled =
+    state === AUTO_PLAY_STATE.PLAYING
+      ? false
+      : isDisabled() || !isValidPlayAmount;
+
+  const buttonLabel =
+    state === AUTO_PLAY_STATE.PLAYING ? "Stop Autoplay" : "Start Autoplay";
+
+  const buttonAction = state === AUTO_PLAY_STATE.PLAYING ? onStopPlay : onPlay;
 
   return (
     <>
@@ -38,23 +120,14 @@ const AutoPlayController = ({ side = PlaySide.LEFT }: { side?: PlaySide }) => {
         disableInput={playOptions.disableInput}
       />
 
-      {state === AUTO_PLAY_STATE.PLAYING ? (
-        <Button className={styles_button.buttonCashout} onClick={onStopPlay}>
-          Stop Autoplay
-        </Button>
-      ) : (
-        <Button
-          disabled={isDisabled() || !isValidPlayAmount}
-          className={
-            currentCurrency === Currency.GOLD
-              ? styles_button.buttonGold
-              : styles_button.buttonSweeps
-          }
-          onClick={() => onPlay(side)}
-        >
-          Start Autoplay
-        </Button>
-      )}
+      <Button
+        disabled={isButtonDisabled}
+        className={getClassName}
+        onClick={() => buttonAction(side)}
+        roleType={roleButton}
+      >
+        {buttonLabel}
+      </Button>
     </>
   );
 };

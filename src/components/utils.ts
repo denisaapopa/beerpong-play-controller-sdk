@@ -1,3 +1,6 @@
+import { GAME_MODE } from "../types";
+import { PlaySide } from "../types/playController";
+
 export const hexToRgb = (hex: string) => {
   const shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
   hex = hex.replace(shorthandRegex, (_, r, g, b) => r + r + g + g + b + b);
@@ -8,4 +11,43 @@ export const hexToRgb = (hex: string) => {
         16,
       )}`
     : null;
+};
+
+export const selectButton = (gameMode: GAME_MODE, side = PlaySide.LEFT) => {
+  const index = side === PlaySide.LEFT ? 0 : 1;
+  const role = `role-${gameMode}-button`;
+  const buttons = document.querySelectorAll<HTMLButtonElement>(
+    `[data-role="${role}"]`,
+  );
+  return buttons[index];
+};
+
+export const addPressedClass = (
+  gameMode: GAME_MODE,
+  activeClassName: string,
+  side?: PlaySide,
+) => {
+  const button = selectButton(gameMode, side);
+
+  if (!button) {
+    return;
+  }
+  if (!button.classList.contains(activeClassName)) {
+    button.classList.add(activeClassName);
+  }
+};
+
+export const removePressedClass = (
+  gameMode: GAME_MODE,
+  activeClassName: string,
+  side?: PlaySide,
+) => {
+  const button = selectButton(gameMode, side);
+
+  if (!button) {
+    return;
+  }
+  if (button.classList.contains(activeClassName)) {
+    button.classList.remove(activeClassName);
+  }
 };
